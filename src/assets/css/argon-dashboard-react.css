@@ -17531,6 +17531,7 @@ textarea[resize="horizontal"] {
 .navbar-vertical .navbar-brand > img {
   max-width: 100%;
   height: 2rem;
+  
 }
 @media (min-width: 768px) {
   .navbar-vertical .navbar-collapse {
