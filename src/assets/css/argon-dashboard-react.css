@@ -17519,10 +17519,11 @@ textarea[resize="horizontal"] {
 .navbar-vertical .navbar {
   border-width: 0 0 1px 0;
   border-style: solid;
-  
+
 }
 .navbar-vertical .navbar-light {
   background-color: transparent;
+
   border-color: #f6f9fc;
 }
 .navbar-vertical .navbar-brand {
@@ -17530,11 +17531,13 @@ textarea[resize="horizontal"] {
 }
 .navbar-vertical .navbar-brand-img,
 .navbar-vertical .navbar-brand > img {
+
   max-width: 100%;
   height: 2rem;
   
 }
 @media (min-width: 768px) {
+
   .navbar-vertical .navbar-collapse {
     margin-left: -1rem;
     margin-right: -1rem;
