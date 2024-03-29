@@ -17519,6 +17519,7 @@ textarea[resize="horizontal"] {
 .navbar-vertical .navbar {
   border-width: 0 0 1px 0;
   border-style: solid;
+  
 }
 .navbar-vertical .navbar-light {
   background-color: transparent;
