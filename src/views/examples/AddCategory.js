@@ -10,6 +10,8 @@ import {
   Label,
   Col,
   Input,
+  Form,
+  CustomInput,
 } from "reactstrap";
 import Header from "components/Headers/Header.js";
 import axios from "axios";
@@ -19,26 +21,32 @@ import { useNavigate } from "react-router-dom";
 const AddCategory = (args) => {
   const navigate = useNavigate();
   const [name, setName] = useState("");
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState(null); // Store the file object
   const [type, setType] = useState("");
-
-
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
     // Simple form validation
     if (!name || !image || !type) {
       alert("All fields are required");
       return;
     }
-
+  
+    // Validate file extension
+    const allowedExtensions = ["jpeg", "jpg", "png", "gif"];
+    const extension = image.name.split(".").pop().toLowerCase();
+    if (!allowedExtensions.includes(extension)) {
+      alert("Image must be a file of type: jpeg, png, jpg, gif");
+      return;
+    }
+  
     try {
       const formData = new FormData();
       formData.append("category_name", name);
-      formData.append("image", image);
+      formData.append("image", image); // Append the file object directly
       formData.append("category_type", type);
-
+  
       const token = Cookies.get("token");
       const response = await axios.post(
         "https://at-the-house-app.brandline360.com/api/admin/services/create",
@@ -51,13 +59,16 @@ const AddCategory = (args) => {
         }
       );
 
+      navigate("/admin/categories")
+  
       if (response.status === 200) {
         alert(response.data.message);
         // Clear form fields after successful registration
         setName("");
         setImage(null);
         setType("");
-        navigate("/admin/categories")
+        // navigate("/admin/categories");
+        console.log(response);
       } else {
         alert(response.data.message);
       }
@@ -72,9 +83,17 @@ const AddCategory = (args) => {
       }
     }
   };
-
+  
   const handleFileChange = (event) => {
-    setImage(event.target.files[0]);
+    const file = event.target.files[0];
+    setImage(file); // Set the file object in the state
+  };
+
+  // viewCategories
+
+  const viewCategories = () => {
+    // alert("viewCategories")
+    navigate("/admin/categories");
   };
 
   return (
@@ -87,70 +106,73 @@ const AddCategory = (args) => {
             <Card className="shadow">
               <CardHeader className="bg-transparent d-flex justify-content-between align-items-center">
                 <h3 className="mb-0">Add Category</h3>
+                <Button
+                  style={{ backgroundColor: "#a10000", color: "#fff" }}
+                  onClick={viewCategories}
+                >
+                  View Categories
+                </Button>
               </CardHeader>
               <CardBody>
-              <form onSubmit={handleSubmit}>
-                      <FormGroup row>
-                        <Label for="name" sm={2}>
-                          Name
-                        </Label>
-                        <Col sm={10}>
-                          <Input
-                            id="name"
-                            name="name"
-                            placeholder="Enter Category Name"
-                            type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                          />
-                        </Col>
+                <Form onSubmit={handleSubmit}>
+                  <Row form>
+                    <Col sm={6}>
+                      <FormGroup>
+                        <Label for="name">Name</Label>
+                        <Input
+                          id="name"
+                          name="name"
+                          placeholder="Enter Category Name"
+                          type="text"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                        />
                       </FormGroup>
-                      <FormGroup row>
-                        <Label for="image" sm={2}>
-                          Image
-                        </Label>
-                        <Col sm={10}>
-                          <Input
-                            id="image"
-                            name="image"
-                            type="file"
-                            onChange={handleFileChange}
-                          />
-                        </Col>
+                    </Col>
+                    <Col sm={6}>
+                      <FormGroup>
+                        <Label for="image">Image</Label>
+                        <CustomInput
+                          type="file"
+                          id="image"
+                          onChange={handleFileChange}
+                          name="image"
+                          style={{
+                            border: "1px solid #ced4da",
+                            borderRadius: "0.25rem",
+                            padding: "0.375rem 0.75rem",
+                          }}
+                        />
                       </FormGroup>
-                      <FormGroup row>
-                        <Label for="type" sm={2}>
-                          Type
-                        </Label>
-                        <Col sm={10}>
-                          <Input
-                            type="select"
-                            name="type"
-                            id="type"
-                            value={type}
-                            onChange={(e) => setType(e.target.value)}
-                          >
-                            <option value="">Select Category Type</option>
-                            <option value="normal">Normal</option>
-                            <option value="popular">Popular</option>
-                            <option value="most_demanding">
-                              Most Demanding
-                            </option>
-                          </Input>
-                        </Col>
+                    </Col>
+                  </Row>
+                  <Row form>
+                    <Col sm={6}>
+                      <FormGroup>
+                        <Label for="type">Type</Label>
+                        <Input
+                          type="select"
+                          name="type"
+                          id="type"
+                          value={type}
+                          onChange={(e) => setType(e.target.value)}
+                        >
+                          <option value="">Select Category Type</option>
+                          <option value="normal">Normal</option>
+                          <option value="popular">Popular</option>
+                          <option value="most_demanding">Most Demanding</option>
+                        </Input>
                       </FormGroup>
-                      <FormGroup row>
-                        <Col>
-                          <Button
-                            color="success"
-                            type="submit"
-                            className="w-100"
-                          >
-                            Register
-                          </Button>
-                        </Col>
-                      </FormGroup>
-                    </form>
+                    </Col>
+                  </Row>
+                  <Button
+                    color="success"
+                    type="submit"
+                    style={{ backgroundColor: "#a10000", color: "#fff" }}
+                  >
+                    Register
+                  </Button>
+                </Form>
               </CardBody>
             </Card>
           </div>

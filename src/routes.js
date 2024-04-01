@@ -30,7 +30,8 @@ import UpdateAgent from "views/examples/UpdateAgent";
 import AddCategory from "views/examples/AddCategory";
 import AgentServices from "views/examples/AgentServices";
 import AddAgentServices from "views/examples/AddAgentServices";
-
+import ContactUs from "views/examples/ContactUs";
+import ViewReferrals from "views/examples/ViewReferrals";
 var routes = [
   {
     path: "/index",
@@ -70,7 +71,7 @@ var routes = [
   {
     path: "/categories",
     name: "Categories",
-    icon: "ni ni-books text-blue",
+    icon: "ni ni-tv-2 text-primary",
     component: <Category />,
     layout: "/admin",
     subcategories:[
@@ -89,7 +90,7 @@ var routes = [
   {
     path: "/agent-services",
     name: "Agent Services",
-    icon: "ni ni-books text-blue",
+    icon: "ni ni-badge text-blue",
     component: <AgentServices />,
     layout: "/admin",
     subcategories:[
@@ -102,6 +103,34 @@ var routes = [
         path: "/add-agent-services",
         name: "Add Services",
         component: <AddAgentServices/>
+      }
+    ]
+  },
+  {
+    path: "/contatct-us",
+    name: "Contact Us",
+    icon: "ni ni-tv-2 text-primary",
+    component: <ContactUs/>,
+    layout: "/admin",
+    subcategories:[
+      {
+        path: "/contatct-us",
+        name: "Contact Us",
+        component: <ContactUs/>
+      }
+    ]
+  },
+  {
+    path: "/view-referrals",
+    name: "Referrals",
+    icon: "ni ni-books text-blue",
+    component: <ViewReferrals/>,
+    layout: "/admin",
+    subcategories:[
+      {
+        path: "/view-referrals",
+        name: "View Referrals",
+        component: <ViewReferrals/>
       }
     ]
   },

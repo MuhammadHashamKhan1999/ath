@@ -17,13 +17,79 @@
 */
 
 // reactstrap components
+import axios from "axios";
+import Cookies from "js-cookie";
+import { useEffect, useState } from "react";
 import { Card, CardBody, CardTitle, Container, Row, Col } from "reactstrap";
 
 const Header = () => {
+  const [users, setUsers] = useState([]);
+  const [agents, setAgents] = useState([]);
+  const [categories, setCategories] = useState([]);
+
+  const getUsers = async () => {
+    const token = Cookies.get("token");
+    const response = await axios.get(
+      "https://at-the-house-app.brandline360.com/api/admin/users",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setUsers(response.data.users.length);
+  };
+
+  const getAgents = async () => {
+    const token = Cookies.get("token");
+    const response = await axios.get(
+      "https://at-the-house-app.brandline360.com/api/admin/agents",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    setAgents(response.data.agents.length);
+  };
+
+
+  const getCategories = async () => {
+      const token = Cookies.get("token");
+      const response = await axios.get(
+        "https://at-the-house-app.brandline360.com/api/admin/services",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        }
+      );
+
+      let popular = response.data.services.popular.length
+      let most_demanding = response.data.services.most_demanding.length
+      let normal = response.data.services.normal.length
+
+      setCategories(popular + most_demanding + normal);
+  };
+
+  useEffect(() => {
+    getUsers();
+    getAgents();
+    getCategories()
+  }, []);
+
   return (
     <>
-      <div className="header bg-gradient-black pb-8 pt-5 pt-md-8" style={{ background: 'linear-gradient(0deg, rgba(161,0,0,1) 0%, rgba(161,0,0,1) 66%)' }}>
-
+      <div
+        className="header bg-gradient-black pb-8 pt-5 pt-md-8"
+        style={{
+          background:
+            "linear-gradient(0deg, rgba(161,0,0,1) 0%, rgba(161,0,0,1) 66%)",
+        }}
+      >
         <Container fluid>
           <div className="header-body">
             {/* Card stats */}
@@ -40,12 +106,12 @@ const Header = () => {
                           Users
                         </CardTitle>
                         <span className="h2 font-weight-bold mb-0">
-                          15
+                          {users}
                         </span>
                       </div>
                       <Col className="col-auto">
                         <div className="icon icon-shape bg-danger text-white rounded-circle shadow">
-                          <i className="fas fa-chart-bar" />
+                        <i className="fas fa-users" />
                         </div>
                       </Col>
                     </Row>
@@ -69,7 +135,7 @@ const Header = () => {
                         >
                           Agents
                         </CardTitle>
-                        <span className="h2 font-weight-bold mb-0">2,356</span>
+                        <span className="h2 font-weight-bold mb-0">{agents}</span>
                       </div>
                       <Col className="col-auto">
                         <div className="icon icon-shape bg-warning text-white rounded-circle shadow">
@@ -97,7 +163,7 @@ const Header = () => {
                         >
                           Categories
                         </CardTitle>
-                        <span className="h2 font-weight-bold mb-0">7</span>
+                        <span className="h2 font-weight-bold mb-0">{categories}</span>
                       </div>
                       <Col className="col-auto">
                         <div className="icon icon-shape bg-yellow text-white rounded-circle shadow">
@@ -125,7 +191,7 @@ const Header = () => {
                         >
                           Agent Services
                         </CardTitle>
-                        <span className="h2 font-weight-bold mb-0">12</span>
+                        <span className="h2 font-weight-bold mb-0">{categories}</span>
                       </div>
                       <Col className="col-auto">
                         <div className="icon icon-shape bg-info text-white rounded-circle shadow">

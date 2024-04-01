@@ -64,8 +64,8 @@ const Login = () => {
       if (response.status === 200) {
         if (data.role === "admin") {
           Cookies.set('token', data.token);
+          console.log(data.token)
           setIsAdminLoggedIn(true); 
-          console.log('Admin login successful'); 
         } else {
           throw new Error('User is not an admin');
         }

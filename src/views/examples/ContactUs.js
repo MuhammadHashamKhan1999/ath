@@ -51,24 +51,24 @@ import Header from "components/Headers/Header.js";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const Users = (args) => {
-  const [users, setUsers] = useState([]);
+const ContactUs = (args) => {
+  const [contacts, setContacts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [usersPerPage] = useState(7); // Number of agents per page
+  const [contactsPerPage] = useState(7); // Number of agents per page
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const token = Cookies.get("token");
         const response = await axios.get(
-          "https://at-the-house-app.brandline360.com/api/admin/users",
+          "https://at-the-house-app.brandline360.com/api/support",
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        setUsers(response.data.users);
+        setContacts(response.data);
       } catch (error) {
         console.error("Error:", error);
       }
@@ -77,61 +77,46 @@ const Users = (args) => {
     fetchUsers();
   }, []);
 
-  const fetchUsers = async () => {
-    try {
-      const token = Cookies.get("token");
-      const response = await axios.get(
-        "https://at-the-house-app.brandline360.com/api/admin/users",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      setUsers(response.data.users);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  };
 
   const handleDelete = async (id) => {
+    console.log(id)
     try {
       const token = Cookies.get("token");
       const response = await axios.delete(
-        "https://at-the-house-app.brandline360.com/api/admin/delete-user/" + id,
+        "https://at-the-house-app.brandline360.com/api/support/" + id, // Check this line
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      alert(response.data.message);
+      console.log(response);
 
+      alert(response.data.message);
+  
       // Remove the deleted user from the users state
-      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
+      setContacts(prevContact => prevContact.filter(contact => contact.id !== id));
     } catch (error) {
       alert(error.response.data.error);
     }
   };
-
-  // Pagination Logic
-  const indexOfLastAgent = currentPage * usersPerPage;
-  const indexOfFirstAgent = indexOfLastAgent - usersPerPage;
-  const currentUsers = users.slice(indexOfFirstAgent, indexOfLastAgent);
+  
+  
+  const indexOfLastAgent = currentPage * contactsPerPage;
+  const indexOfFirstAgent = indexOfLastAgent - contactsPerPage;
+  const currentContact = contacts.slice(indexOfFirstAgent, indexOfLastAgent);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
     <>
       <Header />
-      {/* Page content */}
       <Container className="mt--7" fluid>
-        {/* Table */}
         <Row>
           <div className="col">
             <Card className="shadow">
               <CardHeader className="bg-transparent d-flex justify-content-between align-items-center">
-                <h3 className="mb-0">Users</h3>
+                <h3 className="mb-0">Contacts</h3>
               </CardHeader>
 
               <CardBody className="text-center" style={{overflowX:'scroll'}}>
@@ -141,40 +126,36 @@ const Users = (args) => {
                       <th scope="col">#</th>
                       <th scope="col">Name</th>
                       <th scope="col">Email</th>
-                      <th scope="col">Phone</th>
+                      <th scope="col">Message</th>
                       <th scope="col">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {currentUsers.map((user, index) => (
-                      <tr key={user.id}>
+                    {currentContact.map((contact, index) => (
+                      <tr key={contact.id}>
                         <th scope="row">{index + 1}</th>
-                        <td>{user.name}</td>
-                        <td>{user.email}</td>
-                        <td>{user.phone}</td>
+                        <td >{contact.name}</td>
+                        <td>{contact.email}</td>
+                        <td>{contact.message}</td>
                         <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="20"
-                          height="20"
-                          fill="currentColor"
-                          class="bi bi-file-x-fill"
-                          viewBox="0 0 16 16"
-                          onClick={() => handleDelete(user.id)}
-                          style={{
-                            marginLeft: ".5rem",
-                            cursor: "pointer",
-                            color: "#a10000",
-                            marginTop: "1rem",
-                          }}
-                        >
-                          <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M6.854 6.146 8 7.293l1.146-1.147a.5.5 0 1 1 .708.708L8.707 8l1.147 1.146a.5.5 0 0 1-.708.708L8 8.707 6.854 9.854a.5.5 0 0 1-.708-.708L7.293 8 6.146 6.854a.5.5 0 1 1 .708-.708" />
-                        </svg>
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            fill="currentColor"
+                            class="bi bi-file-x-fill"
+                            viewBox="0 0 16 16"
+                            onClick={() => handleDelete(contact.id)}
+                            style={{marginLeft:'.5rem' , cursor:'pointer' , color:"#a10000" , marginTop:'1rem'}}
+                          >
+                            <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M6.854 6.146 8 7.293l1.146-1.147a.5.5 0 1 1 .708.708L8.707 8l1.147 1.146a.5.5 0 0 1-.708.708L8 8.707 6.854 9.854a.5.5 0 0 1-.708-.708L7.293 8 6.146 6.854a.5.5 0 1 1 .708-.708" />
+                          </svg>
                       </tr>
+                        
                     ))}
                   </tbody>
                 </table>
-                {/* Pagination */}
-                <div
+                  {/* Pagination */}
+                  <div
                   style={{
                     display: "flex",
                     justifyContent: "right",
@@ -185,7 +166,7 @@ const Users = (args) => {
                   <nav aria-label="Page navigation example">
                     <ul className="pagination">
                       {Array.from(
-                        { length: Math.ceil(users.length / usersPerPage) },
+                        { length: Math.ceil(contacts.length / contactsPerPage) },
                         (_, i) => (
                           <li
                             key={i}
@@ -214,4 +195,4 @@ const Users = (args) => {
   );
 };
 
-export default Users;
+export default ContactUs;

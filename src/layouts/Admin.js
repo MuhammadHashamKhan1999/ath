@@ -31,6 +31,7 @@ import UpdateAgent from "views/examples/UpdateAgent";
 import AddCategory from "views/examples/AddCategory";
 import UpdateCategory from "views/examples/UpdateCategory";
 import AddAgentServices from "views/examples/AddAgentServices";
+import UpdateAgentService from "views/examples/UpdateAgentService";
 
 const Admin = (props) => {
   const navigate = useNavigate()
@@ -97,6 +98,7 @@ const Admin = (props) => {
           <Route path="/add-category" element={<AddCategory/>}/>
           <Route path="/update-category/:id" element={<UpdateCategory/>}/>
           <Route path="/add-agent-services" element={<AddAgentServices/>}/>
+          <Route path="/update-agent-services/:id" element={<UpdateAgentService/>}/>
           {/* <Route path="/update-category/:id" element={<UpdateCategory/>}/> */}
         </Routes>
         <Container fluid>

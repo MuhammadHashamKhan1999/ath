@@ -1,65 +1,43 @@
-/*!
-
-=========================================================
-* Argon Dashboard React - v1.2.4
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-react
-* Copyright 2024 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/argon-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import { useEffect, useState } from "react";
-// react component that copies the given text inside your clipboard
-import { CopyToClipboard } from "react-copy-to-clipboard";
-// reactstrap components
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+import Cookies from "js-cookie";
 import {
   Card,
   CardHeader,
   CardBody,
   Container,
   Row,
-  UncontrolledTooltip,
-  Badge,
-  DropdownMenu,
-  DropdownItem,
-  UncontrolledDropdown,
-  DropdownToggle,
-  Media,
-  Progress,
-  Table,
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Form,
   FormGroup,
   Label,
   Col,
   Input,
-  FormText,
+  Button,
+  Form,
+  Modal,
+  ModalFooter,
+  ModalBody,
+  ModalHeader
 } from "reactstrap";
-// core components
 import Header from "components/Headers/Header.js";
-import axios from "axios";
-import Cookies from 'js-cookie';
-import { useNavigate, useParams } from "react-router-dom";
 
-const UpdateAgent = (args) => {
+const UpdateAgent = () => {
   const navigate = useNavigate();
-  const {id} = useParams()
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
-  const fetchdata = async () => {
+  const { id } = useParams();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [modal, setModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+
+  const toggleModal = () => setModal(!modal);
+
+  useEffect(() => {
+    fetchAgentData();
+  }, []);
+
+  const fetchAgentData = async () => {
     try {
       const token = Cookies.get("token");
       const response = await axios.get(
@@ -71,149 +49,140 @@ const UpdateAgent = (args) => {
           },
         }
       );
-      // console.log(id)
-      console.log(response.data);
+      const agentData = response.data.agent;
+      setName(agentData.name);
+      setEmail(agentData.email);
+      setPhone(agentData.phone);
     } catch (error) {
-      console.error("Error fetching categories:", error);
+      console.error("Error fetching agent data:", error);
     }
-  }
-  
-  useEffect(async () => {
-    fetchdata();
-  },[])
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
-    // Simple form validation
-    if (!name || !email || !phone || !password) {
-      alert('All fields are required');
-      return;
-    }
-  
-    if (password.length < 8) {
-      alert('Password must be at least 8 characters long');
-      return;
-    }
-  
+    // Your form submission logic goes here
+  };
+
+  const updateNewAgent = async () => {
     try {
-      const token = Cookies.get('token'); // Retrieve token from cookie
-      const response = await axios.post('https://at-the-house-app.brandline360.com/api/admin/register-agent', {
-        name: name,
-        email: email,
-        phone: phone,
-        password: password
-      }, {
-        headers: {
-          Authorization: `Bearer ${token}` // Include token in Authorization header
+      const token = Cookies.get("token");
+      const response = await axios.put(
+        `https://at-the-house-app.brandline360.com/api/profile/${id}`,
+        {
+          name,
+          email,
+          phone,
+          password,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
         }
-      });
-  
-      if (response.status === 200) {
-        alert(response.data.message);
-        // Clear form fields after successful registration
-        setName('');
-        setEmail('');
-        setPhone('');
-        setPassword('');
-        navigate("/admin/agents")
-      } else {
-        alert(response.data.message);
-      }
+      );
+      setModalMessage(response.data.message);
+      // Redirect to agents list after successful update
+      navigate("/admin/agents");
     } catch (error) {
-      console.error('Error:', error);
-      if (error.response) {
-        // If the error has a response from the server, display the error message
-        alert(error.response.data.message);
-      } else {
-        // If there's no response from the server, display a generic error message
-        alert('Failed to register agent');
-      }
+      console.error("Error updating agent:", error);
+      // Handle error
     }
   };
-  
-  
+
   return (
     <>
       <Header />
-      {/* Page content */}
       <Container className="mt--7" fluid>
-        {/* Table */}
         <Row>
           <div className="col">
             <Card className="shadow">
               <CardHeader className="bg-transparent d-flex justify-content-between align-items-center">
-                <h3 className="mb-0">update Agents</h3>
+                <h3 className="mb-0">Update Agents</h3>
               </CardHeader>
               <CardBody>
-              <Form onSubmit={handleSubmit}>
-                      <FormGroup row>
-                        <Label for="exampleName" sm={2}>
-                          Name
-                        </Label>
-                        <Col sm={10}>
-                          <Input
-                            id="exampleName"
-                            name="name"
-                            placeholder="Enter Agent Name"
-                            type="text"
-                            onChange={(e) => setName(e.target.value)}
-                          />
-                        </Col>
+                <Form onSubmit={handleSubmit}>
+                  <Row form>
+                    <Col md={6}>
+                      <FormGroup>
+                        <Label for="exampleName">Name</Label>
+                        <Input
+                          type="text"
+                          name="name"
+                          id="exampleName"
+                          placeholder="Enter Agent Name"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                        />
                       </FormGroup>
-                      <FormGroup row>
-                        <Label for="exampleEmail" sm={2}>
-                          Email
-                        </Label>
-                        <Col sm={10}>
-                          <Input
-                            id="exampleEmail"
-                            name="email"
-                            placeholder="Enter Email"
-                            type="email"
-                            onChange={(e) => setEmail(e.target.value)}
-                          />
-                        </Col>
+                    </Col>
+                    <Col md={6}>
+                      <FormGroup>
+                        <Label for="exampleEmail">Email</Label>
+                        <Input
+                          type="email"
+                          name="email"
+                          id="exampleEmail"
+                          placeholder="Enter Email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                        />
                       </FormGroup>
-                      <FormGroup row>
-                        <Label for="examplePhone" sm={2}>
-                          Phone
-                        </Label>
-                        <Col sm={10}>
-                          <Input
-                            id="examplePhone"
-                            name="phone"
-                            placeholder="Enter Phone Number"
-                            type="text"
-                            onChange={(e) => setPhone(e.target.value)}
-                          />
-                        </Col>
+                    </Col>
+                  </Row>
+                  <Row form>
+                    <Col md={6}>
+                      <FormGroup>
+                        <Label for="examplePhone">Phone</Label>
+                        <Input
+                          type="text"
+                          name="phone"
+                          id="examplePhone"
+                          placeholder="Enter Phone Number"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                        />
                       </FormGroup>
-                      <FormGroup row>
-                        <Label for="examplePassword" sm={2}>
-                          Password
-                        </Label>
-                        <Col sm={10}>
-                          <Input
-                            id="examplePassword"
-                            name="password"
-                            placeholder="password placeholder"
-                            type="password"
-                            onChange={(e) => setPassword(e.target.value)}
-                          />
-                        </Col>
+                    </Col>
+                    <Col md={6}>
+                      <FormGroup>
+                        <Label for="examplePassword">Password</Label>
+                        <Input
+                          type="password"
+                          name="password"
+                          id="examplePassword"
+                          placeholder="Enter Password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                        />
                       </FormGroup>
-                      <FormGroup check row>
-                        <Col>
-                          <Button color="success" type="submit" className="w-100">Register</Button>
-                        </Col>
-                      </FormGroup>
-                    </Form>
+                    </Col>
+                  </Row>
+                  <Button
+                    type="button"
+                    style={{ backgroundColor: "#a10000", color: "#fff" }}
+                    onClick={updateNewAgent}
+                  >
+                    Update Agent
+                  </Button>
+                </Form>
               </CardBody>
             </Card>
           </div>
         </Row>
       </Container>
+      <Modal isOpen={modal} toggle={toggleModal}>
+        <ModalHeader toggle={toggleModal}>Message</ModalHeader>
+        <ModalBody>{modalMessage}</ModalBody>
+        <ModalFooter>
+          <Button
+            style={{ backgroundColor: "#e1ae26", color: "#fff" }}
+            onClick={toggleModal}
+          >
+            Close
+          </Button>
+        </ModalFooter>
+      </Modal>
     </>
   );
 };
