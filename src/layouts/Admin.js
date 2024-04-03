@@ -48,7 +48,7 @@ const Admin = (props) => {
       // If token does not exist, navigate to authentication page
       navigate("/auth");
     }
-  }, [location]);
+  }, [navigate]);
 
   const getRoutes = (routes) => {
     return routes.map((prop, key) => {
@@ -91,7 +91,7 @@ const Admin = (props) => {
           brandText={getBrandText(props?.location?.pathname)}
         />
         <Routes>
-          {getRoutes(routes)} 
+          {getRoutes(routes)}
           <Route path="*" element={<Navigate to="/admin/index" replace />} />
           <Route path="/add-agent" element={<AddAgents />} />
           <Route path="/update-agent/:id" element={<UpdateAgent />} />
